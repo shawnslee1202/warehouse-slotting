@@ -1,0 +1,24 @@
+{
+  "zone_aisles": {
+    "ambient": [
+      0,
+      1,
+      2
+    ],
+    "chilled": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "frozen": [
+      9
+    ]
+  },
+  "slots": 46,
+  "pitch": 1.0,
+  "spacing": 4.0,
+  "aisle_width": 2.5
+}

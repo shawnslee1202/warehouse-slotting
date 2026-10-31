@@ -1,0 +1,13 @@
+{
+  "main_replications": 2160,
+  "supplemental_replications": 740,
+  "experiment_cells": 290,
+  "replications_per_cell": 10,
+  "one_picker_verification_cases": 320,
+  "max_relative_verification_error": 9.347172302070875e-15,
+  "stream_recycled": false,
+  "time_conservation": true,
+  "order_flow_conservation": true,
+  "single_picker_blocking_zero": true,
+  "passing_blocking_zero": true
+}

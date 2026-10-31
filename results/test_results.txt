@@ -1,0 +1,14 @@
+test_cell_event_equivalence (test_backends.ExactBackendTests.test_cell_event_equivalence) ... ok
+test_blocking_and_passing_control (test_model.ModelTests.test_blocking_and_passing_control) ... ok
+test_hand_calculations (test_model.ModelTests.test_hand_calculations) ... ok
+test_mixed_directions_no_deadlock (test_model.ModelTests.test_mixed_directions_no_deadlock) ... ok
+test_one_picker_analytic_service (test_model.ModelTests.test_one_picker_analytic_service) ... ok
+test_route_distance_and_pick_conservation (test_model.ModelTests.test_route_distance_and_pick_conservation) ... ok
+test_slots_unique_zone_valid (test_model.ModelTests.test_slots_unique_zone_valid) ... ok
+test_split_stable_and_disjoint (test_model.ModelTests.test_split_stable_and_disjoint) ... ok
+test_time_and_flow_conservation (test_model.ModelTests.test_time_and_flow_conservation) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.226s
+
+OK

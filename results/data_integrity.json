@@ -1,0 +1,12 @@
+{
+  "prior_lines": 32434489,
+  "prior_orders": 3214874,
+  "product_catalog_rows": 49688,
+  "order_metadata_rows": 3421083,
+  "train_lines": 25944305,
+  "holdout_lines": 6490184,
+  "duplicate_order_products": 0,
+  "missing_foreign_keys": 0,
+  "missing_line_values": 0,
+  "order_ids_sorted": true
+}

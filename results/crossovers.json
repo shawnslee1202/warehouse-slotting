@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "compact800",
+    "first_tested_mean_reversal": 12,
+    "linear_interpolation_descriptive_only": 10.343949044585987,
+    "first_sustained_simultaneous_advantage": 16
+  },
+  {
+    "scope": "coverage90",
+    "first_tested_mean_reversal": null,
+    "linear_interpolation_descriptive_only": null,
+    "first_sustained_simultaneous_advantage": null
+  }
+]

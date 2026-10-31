@@ -1,0 +1,12 @@
+{
+  "total_prior_orders": 3214874,
+  "total_prior_lines": 32434489,
+  "train_orders": 2571421,
+  "holdout_orders": 643453,
+  "train_lines": 25944305,
+  "n90": 9149,
+  "affinity_sample_orders": 120000,
+  "evaluation_sample_orders": 60000,
+  "split_seed": 20261027,
+  "sample_seed": 91827
+}
