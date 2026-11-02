@@ -1,46 +1,78 @@
-# Congestion-aware slotting: a conditional crossover, not a universal rule
+# Warehouse slotting and picker congestion
 
-**12 pickers per 10 aisles is the first tested mean crossover from ABC to Spread with three-order batches. A sustained advantage is supported from 16 pickers by simultaneous 95% intervals.** The interpolated point estimate is 10.34; it is not an estimated precise physical threshold. This compact experiment serves only 8.0% of sampled complete orders.
+A simulation of how grocery shelf placement affects walking distance, order completion and paid labor.
 
-![Operating curve](figures/throughput_compact800.png)
+Shawn Lee · [shawnslee1202](https://github.com/shawnslee1202)
 
-In the 9,149-SKU, 115-aisle layout, ABC stays ahead through 20 total pickers. A density extension finds the first tested reversal at **138 total pickers, or 12 per ten aisles** (preceded by an ABC advantage at 92). Do not confuse these total headcounts. At ordinary scenario demand, five-order batching with ABC is the stronger operating choice.
+![Completed orders per hour by storage policy and number of pickers](figures/throughput_compact800.png)
 
-## Decision
+With three orders per trip in the ten-aisle layout, spreading popular products across aisles first led on average at 12 pickers.
 
-For the clearly labeled **33.1 eligible orders/hour** scenario in the larger layout, choose **ABC, five orders per tour, six pickers**, subject to acceptable batch lead time and vehicle capacity. This meets the tested lower-capacity-bound rule with 15% nominal reserve. Simulated paid labor is **183.2 hours per 1,000 orders** (95% CI 177.3-189.1), or **$4,580 per 1,000** at an illustrative $25/hour. Compared with eight pickers and three-order ABC batches, measured labor falls 24.5%, while mean oldest-order completion time rises from 34.3 to 47.4 minutes. There is no actual facility demand or wage in the dataset.
+## What this is
 
-For the compact **152.3 eligible orders/hour** scenario, use eight pickers with five-order batches. ABC and Spread have essentially the same paid-labor requirement; ABC offers more capacity headroom and shorter tours. Spread's high-load three-order advantage is not a reason to spread all items at low staffing or under a different batch size.
+Putting popular products near the packing station can shorten walks, but pickers may have to wait for someone else to leave an aisle. This study compared four ways to place products using 3.21 million prior grocery orders from Instacart. Product placement was set using training orders and evaluated on a separate sample of 60,000 orders. Across 2,900 simulated shifts, the study varied staffing, orders per trip and aisle traffic rules.
 
-## What the evidence says
+## Results at a glance
 
-- Training: 2,571,421 prior orders; validation split: 643,453. Velocity and SKU coverage use 25,944,305 training lines; no held-out orders train the layout.
-- A uniform sample of 60,000 held-out orders yields 4,801 complete eligible compact orders and 31,816 larger-layout orders. Affinities use 120,000 training baskets.
-- Single-order S-shape travel: ABC saves 26.2% versus random in the compact scope and 19.2% in the larger scope. Spread costs 16.1% and 20.6% more travel than ABC, respectively.
-- At 20 compact-model pickers and k=3, Spread delivers 308.0 versus ABC's 283.1 orders/hour: +8.8% throughput and about 8.2% fewer capacity labor hours per 1,000. Blocking is 35.7% versus 47.6% of active time.
-- At the same staffing with k=5, ABC delivers 410.0 versus Spread's 393.6 orders/hour. In the no-interference bound, ABC also stays ahead. The conclusion depends on batching and traffic rules.
-- Approximately 76.6% of ABC's compact-scope blocking at 20 pickers is aisle-entry traffic control; 23.4% is waiting for occupied cells. This is a congestion result for the stated dispatch protocol, not proof that local in-aisle blocking alone causes the crossover.
-- 2,900 replicated shifts across 290 cells; ten replications each. 320 direct single-picker checks match the independent analytic time model to numerical precision. Nine automated test methods include 24 exact backend comparisons. All runs pass time and order-flow conservation; none recycles its sampled batch stream.
+| Comparison | Finding |
+|---|---|
+| Walking alone | In the 115-aisle layout, grouping popular items near the front (ABC) cut single-order walking distance by 19.2% versus random placement. [Travel results](docs/RESULTS.md#out-of-sample-single-order-travel) |
+| Three orders per trip | In ten aisles, spreading popular items first led at 12 pickers. The advantage held from 16 pickers after accounting for all eight staffing comparisons. [Paired comparisons](docs/RESULTS.md#paired-comparison-against-abc) |
+| Five orders per trip | At 20 pickers in ten aisles, ABC completed 410.0 orders per hour versus 393.6 for spread placement. [Batching results](docs/RESULTS.md#why-the-crossover-is-conditional) |
+| Larger floor | Spread placement never led through 20 pickers in 115 aisles. Its first lead in the extended staffing tests came at 138 pickers. [Staffing by aisle density](docs/RESULTS.md#larger-layout-density-extension) |
+| Labor and order time | At an assumed 33.1 eligible orders per hour, six pickers using ABC and five-order trips used 183.2 paid hours per 1,000 orders. Compared with three-order ABC trips and eight pickers, labor fell 24.5% while the first order in each batch took 13.1 minutes longer on average. [Labor estimates](docs/RESULTS.md#demand-based-staffing-and-paid-labor) |
 
-## Open the deliverables
+## Quick start
 
-- [Two-page decision brief](report.pdf)
-- [Offline interactive evidence explorer](dashboard.html)
-- [Detailed results and decision tables](docs/RESULTS.md)
-- [Model, assumptions, limitations and sources](docs/METHODS.md)
-- [Reproduction instructions](docs/REPRODUCE.md)
-- [Defensible resume bullets](docs/RESUME_BULLETS.md)
-- [Executed data/scope notebook](notebooks/01_data_and_scope.ipynb)
-- [Executed results notebook](notebooks/02_operating_curves.ipynb)
-- [Blocking chart](figures/blocking_compact800.png), [batching tradeoff](figures/batching_tradeoff.png), [density extension](figures/density_extension.png), [concentration knob](figures/concentration.png)
-- [Raw replication CSV](https://github.com/shawnslee1202/warehouse-slotting/blob/0fecc92dc044f413ccf9aba906f88bc311b50518/results/replications.csv), [supplemental CSV](https://github.com/shawnslee1202/warehouse-slotting/blob/0fecc92dc044f413ccf9aba906f88bc311b50518/results/supplemental_replications.csv), [all means and CIs](results/summary.csv), [validation audit](results/validation.json)
+Read the [two-page report](report.pdf) or download and open the [offline dashboard](dashboard.html). To run the tests with Python 3.12, use PowerShell from the repository root.
 
-## Limits on the recommendation
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m unittest discover -s tests -v
+```
 
-The larger scope covers 90.0% of held-out lines but only 53.0% of complete orders. Excluding the rest shortens baskets from 10.10 to 7.75 lines on average. Tail orders need a separately costed process before this can represent a whole warehouse. The compact subset is much more selective (3.29 lines/order). Both layouts are assumed, including long travel to cold blocks. No dimensions, weights, quantities, cart capacities, actual storage temperatures, calendar dates or facility arrival rates are provided. Conservative exclusive returns and direction control matter; passing sensitivity is an optimistic no-interference bound. Confidence intervals describe simulation/order-sampling noise under fixed assumptions, not physical model uncertainty or customer-level generalization.
+## Reproduce
 
-## Re-run
+To rebuild the report, dashboard and notebooks from the included tables, run `python -m warehouse_slotting.reporting.deliver --root .`.
 
-Install requirements.txt in a Python 3.12 virtual environment, then follow [REPRODUCE.md](docs/REPRODUCE.md). The code is organized as data download/preparation, layout, routing, SimPy simulation, experiment runner, analysis and artifact generation. Raw data are not included. The pinned public mirror and file hashes are recorded in [data_manifest.json](results/data_manifest.json).
+For a full simulation, run the following commands in a fresh checkout after setup. Allow tens of minutes on a four-worker machine, plus download time, and about 2 GB of disk space. The [pinned public data mirror](https://huggingface.co/datasets/attik/Instacart-Market-Basket-Analysis/tree/ff7fd3515d570a606635dfc263cf65216af57713) requires no credentials.
 
-Data attribution: *The Instacart Online Grocery Shopping Dataset 2017*, retrieved through the pinned public mirror on 2026-10-27. Original dataset terms remain applicable; this package is a noncommercial research artifact. Literature: [de Koster et al. (2007)](https://doi.org/10.1016/j.ejor.2006.07.009) and [Gue et al. (2006)](https://doi.org/10.1080/07408170600809341). Full source notes and the distinction between measured data and assumptions are in METHODS.md.
+```powershell
+python -m warehouse_slotting.data.download --out data/raw
+python -m warehouse_slotting.data.prepare --raw data/raw --out data/processed
+python -m warehouse_slotting.validation.audit --root . --raw data/raw
+python -m warehouse_slotting.experiment.run build --processed data/processed --cache cache --results results
+python -m warehouse_slotting.experiment.run run --cache cache --results results --workers 4 --reps 10
+python -m warehouse_slotting.experiment.supplement --cache cache --results results
+python -m warehouse_slotting.analysis.analyze --root .
+python -m warehouse_slotting.validation.audit --root .
+python -m warehouse_slotting.reporting.deliver --root .
+```
+
+The simulation regenerates individual shift records and shelf assignments. The [original run files](https://github.com/shawnslee1202/warehouse-slotting/tree/0fecc92dc044f413ccf9aba906f88bc311b50518/results) are available for comparison.
+
+## Repository map
+
+| Location | Contents |
+|---|---|
+| `warehouse_slotting/data/` | Data download, training split and product selection |
+| `warehouse_slotting/model/` | Shelf placement, routes and picker movement |
+| `warehouse_slotting/experiment/` | Staffing, batching and traffic comparisons |
+| `warehouse_slotting/analysis/` | Operating curves, confidence intervals and labor estimates |
+| `warehouse_slotting/reporting/` | Report, dashboard and notebook generation |
+| `warehouse_slotting/validation/`, `tests/` | Data checks, reference simulator and automated tests |
+| `results/`, `figures/`, `notebooks/` | Result tables, charts and executed notebooks |
+| `docs/` | [Methods](docs/METHODS.md), [findings](docs/RESULTS.md) and [reproduction notes](docs/REPRODUCE.md) |
+
+## Limitations
+
+- The compact layout could fill 8.0% of sampled orders in full, and the larger layout could fill 53.0%. [Order coverage](docs/RESULTS.md#coverage-and-selection-bias)
+- The layout, walking speed, storage temperatures and rules for entering an aisle are assumptions. [Model assumptions](docs/METHODS.md)
+- Entry control accounted for 76.6% of ABC waiting time at 20 pickers in the compact layout. [Waiting time breakdown](docs/RESULTS.md#blocking-decomposition)
+- Demand and wages are illustrative, and the labor estimates exclude replenishment, breaks and orders with products outside the modeled range. [Cost assumptions](docs/METHODS.md)
+
+## Sources and attribution
+
+Data come from *The Instacart Online Grocery Shopping Dataset 2017*. The study draws on the order-picking review by [de Koster and colleagues](https://doi.org/10.1016/j.ejor.2006.07.009) and the narrow-aisle blocking study by [Gue and colleagues](https://doi.org/10.1080/07408170600809341). The dataset retains its original terms. The project code has no specified open-source license. [License notice](docs/LICENSE_NOTICE.md)
