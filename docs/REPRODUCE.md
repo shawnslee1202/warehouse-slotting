@@ -20,7 +20,7 @@ python -m warehouse_slotting.validation.audit --root .
 python -m warehouse_slotting.reporting.deliver --root .
 ```
 
-Use a fresh results directory for a clean rerun. The main experiment runner resumes complete groups from replications.csv; do not mix different seeds, geometries or code versions in one results directory. The supplemental runner refuses to overwrite its existing replication CSV. To preserve delivered evidence, copy the repository and move its results directory aside before a full reproduction. Downloading verifies pinned SHA-256 values; if the mirror disappears, obtain the five original CSVs from an authorized source and supply their directory to prepare.
+Start a full rerun from a fresh checkout. Regenerate the cache with the build command after the package rename. The main experiment runner resumes complete groups from replications.csv; do not mix different seeds, geometries or code versions in one results directory. The supplemental runner refuses to overwrite its existing replication CSV. To preserve delivered evidence, copy the repository and move its results directory aside before a full reproduction. Downloading verifies pinned SHA-256 values; if the mirror disappears, obtain the five original CSVs from an authorized source and supply their directory to prepare.
 
 The exact outputs in this package used Python 3.12, NumPy 2.5.4, pandas 3.0.1, SciPy 1.18.1, SimPy 4.1.2, Matplotlib 3.11.2 and ReportLab 4.4.9. Computational run times depend on hardware. No Simio license or paid service is required. Network access is only needed for libraries and initial data download.
 

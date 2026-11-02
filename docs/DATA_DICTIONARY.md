@@ -2,6 +2,8 @@
 
 All time quantities are seconds unless a column name specifies hours or minutes. Every throughput observation is based on completions within the eight-hour measurement window after warm-up. All policies in a scope use the same eligible held-out order population.
 
+The experiment regenerates the per-shift records, slot assignments, pair counts and aisle workloads locally. [Original run files](https://github.com/shawnslee1202/warehouse-slotting/tree/0fecc92dc044f413ccf9aba906f88bc311b50518/results) remain available.
+
 | File | Grain and purpose |
 | --- | --- |
 | data_manifest.json | Pinned source URL, byte size and SHA-256 for each raw CSV |
@@ -29,7 +31,7 @@ All time quantities are seconds unless a column name specifies hours or minutes.
 | batch_staffing_economics.csv | ABC/Spread comparison for k=3 and k=5, with actually simulated central demand |
 | blocking_components.csv | Mean entry-control and occupied-cell waiting at 8/20 pickers |
 | validation.json | Model-result audit assertions and replication completeness |
-| test_results.txt | Automated test output |
+
 
 ## Replication fields
 

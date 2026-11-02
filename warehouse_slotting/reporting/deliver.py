@@ -63,7 +63,7 @@ For the compact **152.3 eligible orders/hour** scenario, use eight pickers with 
 - [Executed data/scope notebook](notebooks/01_data_and_scope.ipynb)
 - [Executed results notebook](notebooks/02_operating_curves.ipynb)
 - [Blocking chart](figures/blocking_compact800.png), [batching tradeoff](figures/batching_tradeoff.png), [density extension](figures/density_extension.png), [concentration knob](figures/concentration.png)
-- [Raw replication CSV](results/replications.csv), [supplemental CSV](results/supplemental_replications.csv), [all means and CIs](results/summary.csv), [validation audit](results/validation.json)
+- [Raw replication CSV](https://github.com/shawnslee1202/warehouse-slotting/blob/0fecc92dc044f413ccf9aba906f88bc311b50518/results/replications.csv), [supplemental CSV](https://github.com/shawnslee1202/warehouse-slotting/blob/0fecc92dc044f413ccf9aba906f88bc311b50518/results/supplemental_replications.csv), [all means and CIs](results/summary.csv), [validation audit](results/validation.json)
 
 ## Limits on the recommendation
 
