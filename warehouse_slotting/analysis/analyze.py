@@ -7,7 +7,7 @@ from scipy.stats import t
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from .experiment import interval,POLICIES
+from warehouse_slotting.experiment.run import interval,POLICIES
 KEYS=['scope','policy','k','routing','passing','warmup','speed','pick_seconds','mode','pickers','family']
 METRICS=['orders_per_hour','lines_per_hour','mean_tour_seconds','mean_queue_seconds','mean_oldest_order_seconds','blocking_share','utilization','productive_utilization','labor_hours_per_1000','travel_hours','pick_hours','blocking_hours','idle_hours','wip_start','wip_end']
 COLORS={'ABC':'#176B70','Spread':'#D16B38','Affinity':'#7961A5','Random':'#9AADB8','A50':'#418CB7','A100':'#CEAE3C'}

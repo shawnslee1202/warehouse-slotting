@@ -1,7 +1,7 @@
 """S-shape and largest-gap tours; independent closed-form distance check."""
 from collections import Counter,defaultdict
 from dataclasses import dataclass
-from .layout import ZONES
+from warehouse_slotting.model.layout import ZONES
 
 @dataclass(frozen=True)
 class Move:

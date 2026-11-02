@@ -4,10 +4,10 @@ import argparse,json,pickle,time
 import numpy as np
 import pandas as pd
 from scipy.stats import t
-from .prepare import scope_data
-from .layout import make_layout,assign
-from .routing import route,analytic_distance,mapping_from,Move,Visit
-from .simulation import Batch,simulate
+from warehouse_slotting.data.prepare import scope_data
+from warehouse_slotting.model.layout import make_layout,assign
+from warehouse_slotting.model.routing import route,analytic_distance,mapping_from,Move,Visit
+from warehouse_slotting.model.simulation import Batch,simulate
 
 PICKERS=[1,2,4,6,8,12,16,20]
 POLICIES=['Random','ABC','Affinity','Spread']

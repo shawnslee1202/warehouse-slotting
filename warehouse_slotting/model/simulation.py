@@ -3,7 +3,7 @@ from collections import deque,Counter
 from dataclasses import dataclass
 import numpy as np
 import simpy
-from .routing import Move,Visit
+from warehouse_slotting.model.routing import Move,Visit
 
 class DirectionGate:
     """FIFO group admission. Same-direction traversals share an aisle.
@@ -34,13 +34,16 @@ class Batch:
 class Ledger:
     def __init__(self,env,warm,end): self.env=env; self.warm=warm; self.end=end; self.since=env.now; self.state='idle'; self.total=Counter()
     def switch(self,new):
-        self.total[self.state]+=max(0,min(self.env.now,self.end)-max(self.since,self.warm)); self.since=self.env.now; self.state=new
+        if self.state!='scheduled': self.add(self.state,self.since,self.env.now)
+        self.since=self.env.now; self.state=new
+    def add(self,state,start,end):
+        self.total[state]+=max(0,min(end,self.end)-max(start,self.warm))
 
 
 def simulate(batches,layout,pickers,seed=0,arrival_rate=None,passing=False,warmup=3600,hours=8,speed=1.2,pick_seconds=15,depot_seconds=30,trace=False):
     if pickers<1 or not batches: raise ValueError('Need at least one picker and one batch')
     env=simpy.Environment(); end=warmup+hours*3600; rng=np.random.default_rng(seed)
-    cells=[[simpy.Resource(env,capacity=1) for _ in range(layout.slots+2)] for _ in range(layout.aisles)]
+    free_at=np.zeros((layout.aisles,layout.slots+2),dtype=float)
     gates=[DirectionGate(env) for _ in range(layout.aisles)]
     ledgers=[]; completed=[]; completed_window=0; arrived=0; initial_wip=0; batch_counter=0; tours=[]
     store=simpy.Store(env); eventlog=[]
@@ -75,19 +78,23 @@ def simulate(batches,layout,pickers,seed=0,arrival_rate=None,passing=False,warmu
                     t0=env.now; ledger.switch('gate_blocking')
                     yield gate.request('return' if op.returning else ('up' if op.entry==0 else 'down'))
                     blocking+=env.now-t0
-                current=None; request=None; picked=set()
+                # Reserve the entire admitted FIFO path. With deterministic service,
+                # no lateral entrances, and direction gating, future cell releases are
+                # known exactly. This is equivalent to per-cell SimPy resources, but
+                # only one timeout is needed per aisle. See simulation_reference.py.
+                ledger.switch('scheduled'); now=env.now; current=None; picked=set()
                 for cell in op.cells():
-                    next_resource=cells[op.aisle][cell] if 1<=cell<=layout.slots else None
-                    next_request=None
-                    if not passing and next_resource is not None:
-                        t0=env.now; ledger.switch('cell_blocking'); next_request=next_resource.request(); yield next_request; blocking+=env.now-t0
-                    if current is not None: current.release(request)
-                    current=next_resource if not passing else None; request=next_request
-                    t=layout.pitch/speed; ledger.switch('travel'); yield env.timeout(t); travel+=t
-                    if trace: eventlog.append((env.now,wid,op.aisle,cell))
+                    interior=1<=cell<=layout.slots
+                    grant=max(now,float(free_at[op.aisle,cell])) if interior and not passing else now
+                    ledger.add('cell_blocking',now,grant); blocking+=grant-now
+                    if current is not None: free_at[op.aisle,current]=grant
+                    current=cell if interior and not passing else None
+                    t=layout.pitch/speed; ledger.add('travel',grant,grant+t); now=grant+t; travel+=t
+                    if trace: eventlog.append((now,wid,op.aisle,cell))
                     if cell in op.picks and cell not in picked:
-                        t=op.picks[cell]*pick_seconds; ledger.switch('pick'); yield env.timeout(t); pick+=t; picked.add(cell)
-                if current is not None: current.release(request)
+                        t=op.picks[cell]*pick_seconds; ledger.add('pick',now,now+t); now+=t; pick+=t; picked.add(cell)
+                if current is not None: free_at[op.aisle,current]=now
+                yield env.timeout(now-env.now)
                 if not passing: gate.release()
             ledger.switch('depot'); yield env.timeout(depot_seconds)
             assert abs(travel-batch.distance/speed)<1e-6

@@ -3,7 +3,7 @@ import argparse,pickle
 from pathlib import Path
 import pandas as pd
 from concurrent.futures import ProcessPoolExecutor,as_completed
-from .experiment import run_group,PICKERS
+from warehouse_slotting.experiment.run import run_group,PICKERS
 
 def jobs(cache):
     for scope in ['compact800','coverage90']:

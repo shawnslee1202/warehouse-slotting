@@ -8,16 +8,16 @@ Run from the repository root:
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python -m slotting.download --out data/raw
-python -m slotting.prepare --raw data/raw --out data/processed
-python -m slotting.audit --root . --raw data/raw
+python -m warehouse_slotting.data.download --out data/raw
+python -m warehouse_slotting.data.prepare --raw data/raw --out data/processed
+python -m warehouse_slotting.validation.audit --root . --raw data/raw
 python -m unittest discover -s tests -v
-python -m slotting.experiment build --processed data/processed --cache cache --results results
-python -m slotting.experiment run --cache cache --results results --workers 4 --reps 10
-python -m slotting.supplement --cache cache --results results
-python -m slotting.analyze --root .
-python -m slotting.audit --root .
-python -m slotting.deliver --root .
+python -m warehouse_slotting.experiment.run build --processed data/processed --cache cache --results results
+python -m warehouse_slotting.experiment.run run --cache cache --results results --workers 4 --reps 10
+python -m warehouse_slotting.experiment.supplement --cache cache --results results
+python -m warehouse_slotting.analysis.analyze --root .
+python -m warehouse_slotting.validation.audit --root .
+python -m warehouse_slotting.reporting.deliver --root .
 ```
 
 Use a fresh results directory for a clean rerun. The main experiment runner resumes complete groups from replications.csv; do not mix different seeds, geometries or code versions in one results directory. The supplemental runner refuses to overwrite its existing replication CSV. To preserve delivered evidence, copy the repository and move its results directory aside before a full reproduction. Downloading verifies pinned SHA-256 values; if the mirror disappears, obtain the five original CSVs from an authorized source and supply their directory to prepare.

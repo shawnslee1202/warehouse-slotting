@@ -1,9 +1,9 @@
 import unittest
 import numpy as np
-from slotting.layout import Layout
-from slotting.routing import route,analytic_distance
-from slotting.simulation import Batch,simulate
-from slotting.simulation_reference import simulate as reference
+from warehouse_slotting.model.layout import Layout
+from warehouse_slotting.model.routing import route,analytic_distance
+from warehouse_slotting.model.simulation import Batch,simulate
+from warehouse_slotting.validation.simulation_reference import simulate as reference
 
 class ExactBackendTests(unittest.TestCase):
     def test_cell_event_equivalence(self):

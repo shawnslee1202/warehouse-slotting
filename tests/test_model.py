@@ -2,10 +2,10 @@ import unittest
 from collections import Counter
 import numpy as np
 import pandas as pd
-from slotting.layout import Layout,assign
-from slotting.routing import route,analytic_distance,mapping_from,Move,Visit
-from slotting.simulation import Batch,simulate
-from slotting.prepare import split_hash
+from warehouse_slotting.model.layout import Layout,assign
+from warehouse_slotting.model.routing import route,analytic_distance,mapping_from,Move,Visit
+from warehouse_slotting.model.simulation import Batch,simulate
+from warehouse_slotting.data.prepare import split_hash
 
 class ModelTests(unittest.TestCase):
     def setUp(self):

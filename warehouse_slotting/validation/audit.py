@@ -3,7 +3,7 @@ from pathlib import Path
 import json,hashlib
 import numpy as np
 import pandas as pd
-from .prepare import split_hash
+from warehouse_slotting.data.prepare import split_hash
 
 def audit_raw(raw,out):
     raw,out=Path(raw),Path(out)
@@ -26,7 +26,7 @@ def audit_raw(raw,out):
 
 def audit_results(root):
     root=Path(root); r=root/'results'; main=pd.read_csv(r/'replications.csv'); extra=pd.read_csv(r/'supplemental_replications.csv'); verify=pd.read_csv(r/'verification.csv')
-    from .analyze import KEYS
+    from warehouse_slotting.analysis.analyze import KEYS
     allrows=pd.concat([main,extra],ignore_index=True)
     assert not allrows.duplicated(KEYS+['rep']).any()
     counts=allrows.groupby(KEYS).size(); assert (counts==10).all()
